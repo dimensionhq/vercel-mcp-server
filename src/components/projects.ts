@@ -308,283 +308,283 @@ export function registerProjectTools(server: McpServer, accessToken: string) {
 		},
 	);
 
-	// Update a project
-	server.tool(
-		'update_project',
-		'Update an existing project',
-		{
-			idOrName: z
-				.string()
-				.describe('The unique project identifier or project name'),
-			name: z
-				.string()
-				.max(100)
-				.regex(/^(?!.*---)[a-z0-9-_.]+$/)
-				.optional()
-				.describe('The desired name for the project'),
-			framework: z
-				.enum(['blitzjs', 'nextjs', 'gatsby', 'remix'])
-				.nullable()
-				.optional()
-				.describe('The framework being used for this project'),
-			buildCommand: z
-				.string()
-				.max(256)
-				.nullable()
-				.optional()
-				.describe('The build command for this project'),
-			devCommand: z
-				.string()
-				.max(256)
-				.nullable()
-				.optional()
-				.describe('The dev command for this project'),
-			installCommand: z
-				.string()
-				.max(256)
-				.nullable()
-				.optional()
-				.describe('The install command for this project'),
-			outputDirectory: z
-				.string()
-				.max(256)
-				.nullable()
-				.optional()
-				.describe('The output directory of the project'),
-			rootDirectory: z
-				.string()
-				.max(256)
-				.nullable()
-				.optional()
-				.describe('The directory or relative path to the source code'),
-			nodeVersion: z
-				.enum(['22.x', '20.x', '18.x', '16.x', '14.x', '12.x', '10.x'])
-				.optional()
-				.describe('Node.js version'),
-			serverlessFunctionRegion: z
-				.string()
-				.max(4)
-				.nullable()
-				.optional()
-				.describe('The region to deploy Serverless Functions'),
-			publicSource: z
-				.boolean()
-				.nullable()
-				.optional()
-				.describe('Whether source code and logs should be public'),
-			serverlessFunctionZeroConfigFailover: z
-				.boolean()
-				.optional()
-				.describe('Enable Zero Config Failover'),
-			enableAffectedProjectsDeployments: z
-				.boolean()
-				.optional()
-				.describe('Skip deployments when no changes to root directory'),
-			autoExposeSystemEnvs: z
-				.boolean()
-				.optional()
-				.describe('Auto expose system environment variables'),
-			autoAssignCustomDomains: z
-				.boolean()
-				.optional()
-				.describe('Auto assign custom domains'),
-			customerSupportCodeVisibility: z
-				.boolean()
-				.optional()
-				.describe('Allow customer support to see git source'),
-			directoryListing: z
-				.boolean()
-				.optional()
-				.describe('Enable directory listing'),
-			gitForkProtection: z
-				.boolean()
-				.optional()
-				.describe('Require authorization for Git fork PRs'),
-			gitLFS: z.boolean().optional().describe('Enable Git LFS'),
-			previewDeploymentsDisabled: z
-				.boolean()
-				.nullable()
-				.optional()
-				.describe('Disable preview deployments'),
-			sourceFilesOutsideRootDirectory: z
-				.boolean()
-				.optional()
-				.describe('Allow source files outside root directory'),
-			enablePreviewFeedback: z
-				.boolean()
-				.nullable()
-				.optional()
-				.describe('Enable preview toolbar'),
-			enableProductionFeedback: z
-				.boolean()
-				.nullable()
-				.optional()
-				.describe('Enable production toolbar'),
-			skewProtectionBoundaryAt: z
-				.number()
-				.min(0)
-				.optional()
-				.describe('Skew Protection boundary timestamp'),
-			skewProtectionMaxAge: z
-				.number()
-				.min(0)
-				.optional()
-				.describe('Skew Protection max age in seconds'),
-			oidcTokenConfig: z
-				.object({
-					enabled: z.boolean(),
-					issuerMode: z.enum(['global']),
-				})
-				.optional()
-				.describe('OpenID Connect token configuration'),
-			passwordProtection: z
-				.object({
-					deploymentType: z.enum(['all']),
-					password: z.string().nullable(),
-				})
-				.nullable()
-				.optional()
-				.describe('Password protection settings'),
-			ssoProtection: z
-				.object({
-					deploymentType: z.enum(['preview']),
-				})
-				.nullable()
-				.optional()
-				.describe('SSO protection settings'),
-			trustedIps: z
-				.object({
-					deploymentType: z.enum(['all']),
-					addresses: z.array(
-						z.object({
-							value: z.string(),
-							note: z.string(),
-						}),
-					),
-					protectionMode: z.enum(['exclusive']),
-				})
-				.nullable()
-				.optional()
-				.describe('Trusted IPs configuration'),
-			optionsAllowlist: z
-				.object({
-					paths: z.array(
-						z.object({
-							value: z.string(),
-						}),
-					),
-				})
-				.nullable()
-				.optional()
-				.describe('Options allowlist configuration'),
-			...teamParams,
-		},
-		async ({
-			idOrName,
-			name,
-			framework,
-			buildCommand,
-			devCommand,
-			installCommand,
-			outputDirectory,
-			rootDirectory,
-			nodeVersion,
-			serverlessFunctionRegion,
-			publicSource,
-			serverlessFunctionZeroConfigFailover,
-			enableAffectedProjectsDeployments,
-			autoExposeSystemEnvs,
-			autoAssignCustomDomains,
-			customerSupportCodeVisibility,
-			directoryListing,
-			gitForkProtection,
-			gitLFS,
-			previewDeploymentsDisabled,
-			sourceFilesOutsideRootDirectory,
-			enablePreviewFeedback,
-			enableProductionFeedback,
-			skewProtectionBoundaryAt,
-			skewProtectionMaxAge,
-			oidcTokenConfig,
-			passwordProtection,
-			ssoProtection,
-			trustedIps,
-			optionsAllowlist,
-			slug,
-		}) => {
-			const url = new URL(`${BASE_URL}/v9/projects/${idOrName}`);
-			if (slug) url.searchParams.append('slug', slug);
+	// // Update a project
+	// server.tool(
+	// 	'update_project',
+	// 	'Update an existing project',
+	// 	{
+	// 		idOrName: z
+	// 			.string()
+	// 			.describe('The unique project identifier or project name'),
+	// 		name: z
+	// 			.string()
+	// 			.max(100)
+	// 			.regex(/^(?!.*---)[a-z0-9-_.]+$/)
+	// 			.optional()
+	// 			.describe('The desired name for the project'),
+	// 		framework: z
+	// 			.enum(['blitzjs', 'nextjs', 'gatsby', 'remix'])
+	// 			.nullable()
+	// 			.optional()
+	// 			.describe('The framework being used for this project'),
+	// 		buildCommand: z
+	// 			.string()
+	// 			.max(256)
+	// 			.nullable()
+	// 			.optional()
+	// 			.describe('The build command for this project'),
+	// 		devCommand: z
+	// 			.string()
+	// 			.max(256)
+	// 			.nullable()
+	// 			.optional()
+	// 			.describe('The dev command for this project'),
+	// 		installCommand: z
+	// 			.string()
+	// 			.max(256)
+	// 			.nullable()
+	// 			.optional()
+	// 			.describe('The install command for this project'),
+	// 		outputDirectory: z
+	// 			.string()
+	// 			.max(256)
+	// 			.nullable()
+	// 			.optional()
+	// 			.describe('The output directory of the project'),
+	// 		rootDirectory: z
+	// 			.string()
+	// 			.max(256)
+	// 			.nullable()
+	// 			.optional()
+	// 			.describe('The directory or relative path to the source code'),
+	// 		nodeVersion: z
+	// 			.enum(['22.x', '20.x', '18.x', '16.x', '14.x', '12.x', '10.x'])
+	// 			.optional()
+	// 			.describe('Node.js version'),
+	// 		serverlessFunctionRegion: z
+	// 			.string()
+	// 			.max(4)
+	// 			.nullable()
+	// 			.optional()
+	// 			.describe('The region to deploy Serverless Functions'),
+	// 		publicSource: z
+	// 			.boolean()
+	// 			.nullable()
+	// 			.optional()
+	// 			.describe('Whether source code and logs should be public'),
+	// 		serverlessFunctionZeroConfigFailover: z
+	// 			.boolean()
+	// 			.optional()
+	// 			.describe('Enable Zero Config Failover'),
+	// 		enableAffectedProjectsDeployments: z
+	// 			.boolean()
+	// 			.optional()
+	// 			.describe('Skip deployments when no changes to root directory'),
+	// 		autoExposeSystemEnvs: z
+	// 			.boolean()
+	// 			.optional()
+	// 			.describe('Auto expose system environment variables'),
+	// 		autoAssignCustomDomains: z
+	// 			.boolean()
+	// 			.optional()
+	// 			.describe('Auto assign custom domains'),
+	// 		customerSupportCodeVisibility: z
+	// 			.boolean()
+	// 			.optional()
+	// 			.describe('Allow customer support to see git source'),
+	// 		directoryListing: z
+	// 			.boolean()
+	// 			.optional()
+	// 			.describe('Enable directory listing'),
+	// 		gitForkProtection: z
+	// 			.boolean()
+	// 			.optional()
+	// 			.describe('Require authorization for Git fork PRs'),
+	// 		gitLFS: z.boolean().optional().describe('Enable Git LFS'),
+	// 		previewDeploymentsDisabled: z
+	// 			.boolean()
+	// 			.nullable()
+	// 			.optional()
+	// 			.describe('Disable preview deployments'),
+	// 		sourceFilesOutsideRootDirectory: z
+	// 			.boolean()
+	// 			.optional()
+	// 			.describe('Allow source files outside root directory'),
+	// 		enablePreviewFeedback: z
+	// 			.boolean()
+	// 			.nullable()
+	// 			.optional()
+	// 			.describe('Enable preview toolbar'),
+	// 		enableProductionFeedback: z
+	// 			.boolean()
+	// 			.nullable()
+	// 			.optional()
+	// 			.describe('Enable production toolbar'),
+	// 		skewProtectionBoundaryAt: z
+	// 			.number()
+	// 			.min(0)
+	// 			.optional()
+	// 			.describe('Skew Protection boundary timestamp'),
+	// 		skewProtectionMaxAge: z
+	// 			.number()
+	// 			.min(0)
+	// 			.optional()
+	// 			.describe('Skew Protection max age in seconds'),
+	// 		oidcTokenConfig: z
+	// 			.object({
+	// 				enabled: z.boolean(),
+	// 				issuerMode: z.enum(['global']),
+	// 			})
+	// 			.optional()
+	// 			.describe('OpenID Connect token configuration'),
+	// 		passwordProtection: z
+	// 			.object({
+	// 				deploymentType: z.enum(['all']),
+	// 				password: z.string().nullable(),
+	// 			})
+	// 			.nullable()
+	// 			.optional()
+	// 			.describe('Password protection settings'),
+	// 		ssoProtection: z
+	// 			.object({
+	// 				deploymentType: z.enum(['preview']),
+	// 			})
+	// 			.nullable()
+	// 			.optional()
+	// 			.describe('SSO protection settings'),
+	// 		trustedIps: z
+	// 			.object({
+	// 				deploymentType: z.enum(['all']),
+	// 				addresses: z.array(
+	// 					z.object({
+	// 						value: z.string(),
+	// 						note: z.string(),
+	// 					}),
+	// 				),
+	// 				protectionMode: z.enum(['exclusive']),
+	// 			})
+	// 			.nullable()
+	// 			.optional()
+	// 			.describe('Trusted IPs configuration'),
+	// 		optionsAllowlist: z
+	// 			.object({
+	// 				paths: z.array(
+	// 					z.object({
+	// 						value: z.string(),
+	// 					}),
+	// 				),
+	// 			})
+	// 			.nullable()
+	// 			.optional()
+	// 			.describe('Options allowlist configuration'),
+	// 		...teamParams,
+	// 	},
+	// 	async ({
+	// 		idOrName,
+	// 		name,
+	// 		framework,
+	// 		buildCommand,
+	// 		devCommand,
+	// 		installCommand,
+	// 		outputDirectory,
+	// 		rootDirectory,
+	// 		nodeVersion,
+	// 		serverlessFunctionRegion,
+	// 		publicSource,
+	// 		serverlessFunctionZeroConfigFailover,
+	// 		enableAffectedProjectsDeployments,
+	// 		autoExposeSystemEnvs,
+	// 		autoAssignCustomDomains,
+	// 		customerSupportCodeVisibility,
+	// 		directoryListing,
+	// 		gitForkProtection,
+	// 		gitLFS,
+	// 		previewDeploymentsDisabled,
+	// 		sourceFilesOutsideRootDirectory,
+	// 		enablePreviewFeedback,
+	// 		enableProductionFeedback,
+	// 		skewProtectionBoundaryAt,
+	// 		skewProtectionMaxAge,
+	// 		oidcTokenConfig,
+	// 		passwordProtection,
+	// 		ssoProtection,
+	// 		trustedIps,
+	// 		optionsAllowlist,
+	// 		slug,
+	// 	}) => {
+	// 		const url = new URL(`${BASE_URL}/v9/projects/${idOrName}`);
+	// 		if (slug) url.searchParams.append('slug', slug);
 
-			const payload: any = {
-				name,
-				...(framework && { framework }),
-				...(buildCommand !== undefined && { buildCommand }),
-				...(devCommand !== undefined && { devCommand }),
-				...(installCommand !== undefined && { installCommand }),
-				...(outputDirectory !== undefined && { outputDirectory }),
-				...(rootDirectory !== undefined && { rootDirectory }),
-				...(nodeVersion && { nodeVersion }),
-				...(serverlessFunctionRegion !== undefined && {
-					serverlessFunctionRegion,
-				}),
-				...(publicSource !== undefined && { publicSource }),
-				...(serverlessFunctionZeroConfigFailover !== undefined && {
-					serverlessFunctionZeroConfigFailover,
-				}),
-				...(enableAffectedProjectsDeployments !== undefined && {
-					enableAffectedProjectsDeployments,
-				}),
-				...(autoExposeSystemEnvs !== undefined && { autoExposeSystemEnvs }),
-				...(autoAssignCustomDomains !== undefined && {
-					autoAssignCustomDomains,
-				}),
-				...(customerSupportCodeVisibility !== undefined && {
-					customerSupportCodeVisibility,
-				}),
-				...(directoryListing !== undefined && { directoryListing }),
-				...(gitForkProtection !== undefined && { gitForkProtection }),
-				...(gitLFS !== undefined && { gitLFS }),
-				...(previewDeploymentsDisabled !== undefined && {
-					previewDeploymentsDisabled,
-				}),
-				...(sourceFilesOutsideRootDirectory !== undefined && {
-					sourceFilesOutsideRootDirectory,
-				}),
-				...(enablePreviewFeedback !== undefined && { enablePreviewFeedback }),
-				...(enableProductionFeedback !== undefined && {
-					enableProductionFeedback,
-				}),
-				...(skewProtectionBoundaryAt !== undefined && {
-					skewProtectionBoundaryAt,
-				}),
-				...(skewProtectionMaxAge !== undefined && { skewProtectionMaxAge }),
-				...(oidcTokenConfig && { oidcTokenConfig }),
-				...(passwordProtection && { passwordProtection }),
-				...(ssoProtection && { ssoProtection }),
-				...(trustedIps && { trustedIps }),
-				...(optionsAllowlist && { optionsAllowlist }),
-			};
+	// 		const payload: any = {
+	// 			name,
+	// 			...(framework && { framework }),
+	// 			...(buildCommand !== undefined && { buildCommand }),
+	// 			...(devCommand !== undefined && { devCommand }),
+	// 			...(installCommand !== undefined && { installCommand }),
+	// 			...(outputDirectory !== undefined && { outputDirectory }),
+	// 			...(rootDirectory !== undefined && { rootDirectory }),
+	// 			...(nodeVersion && { nodeVersion }),
+	// 			...(serverlessFunctionRegion !== undefined && {
+	// 				serverlessFunctionRegion,
+	// 			}),
+	// 			...(publicSource !== undefined && { publicSource }),
+	// 			...(serverlessFunctionZeroConfigFailover !== undefined && {
+	// 				serverlessFunctionZeroConfigFailover,
+	// 			}),
+	// 			...(enableAffectedProjectsDeployments !== undefined && {
+	// 				enableAffectedProjectsDeployments,
+	// 			}),
+	// 			...(autoExposeSystemEnvs !== undefined && { autoExposeSystemEnvs }),
+	// 			...(autoAssignCustomDomains !== undefined && {
+	// 				autoAssignCustomDomains,
+	// 			}),
+	// 			...(customerSupportCodeVisibility !== undefined && {
+	// 				customerSupportCodeVisibility,
+	// 			}),
+	// 			...(directoryListing !== undefined && { directoryListing }),
+	// 			...(gitForkProtection !== undefined && { gitForkProtection }),
+	// 			...(gitLFS !== undefined && { gitLFS }),
+	// 			...(previewDeploymentsDisabled !== undefined && {
+	// 				previewDeploymentsDisabled,
+	// 			}),
+	// 			...(sourceFilesOutsideRootDirectory !== undefined && {
+	// 				sourceFilesOutsideRootDirectory,
+	// 			}),
+	// 			...(enablePreviewFeedback !== undefined && { enablePreviewFeedback }),
+	// 			...(enableProductionFeedback !== undefined && {
+	// 				enableProductionFeedback,
+	// 			}),
+	// 			...(skewProtectionBoundaryAt !== undefined && {
+	// 				skewProtectionBoundaryAt,
+	// 			}),
+	// 			...(skewProtectionMaxAge !== undefined && { skewProtectionMaxAge }),
+	// 			...(oidcTokenConfig && { oidcTokenConfig }),
+	// 			...(passwordProtection && { passwordProtection }),
+	// 			...(ssoProtection && { ssoProtection }),
+	// 			...(trustedIps && { trustedIps }),
+	// 			...(optionsAllowlist && { optionsAllowlist }),
+	// 		};
 
-			const response = await fetch(url.toString(), {
-				method: 'PATCH',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${accessToken}`,
-				},
-				body: JSON.stringify(payload),
-			});
+	// 		const response = await fetch(url.toString(), {
+	// 			method: 'PATCH',
+	// 			headers: {
+	// 				'Content-Type': 'application/json',
+	// 				Authorization: `Bearer ${accessToken}`,
+	// 			},
+	// 			body: JSON.stringify(payload),
+	// 		});
 
-			const data = await handleResponse(response);
-			return {
-				content: [
-					{
-						type: 'text',
-						text: `Project updated:\n${JSON.stringify(data, null, 2)}`,
-					},
-				],
-			};
-		},
-	);
+	// 		const data = await handleResponse(response);
+	// 		return {
+	// 			content: [
+	// 				{
+	// 					type: 'text',
+	// 					text: `Project updated:\n${JSON.stringify(data, null, 2)}`,
+	// 				},
+	// 			],
+	// 		};
+	// 	},
+	// );
 
 	// List deployments for a project
 	server.tool(

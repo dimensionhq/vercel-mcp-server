@@ -248,49 +248,49 @@ export function registerDeploymentTools(
 		},
 	);
 
-	// Delete deployment
-	server.tool(
-		'delete_deployment',
-		'Delete a deployment by ID or URL',
-		{
-			id: z.string().describe('The unique identifier of the deployment'),
-			url: z
-				.string()
-				.optional()
-				.describe('A Deployment or Alias URL (overrides ID if provided)'),
-			teamId: z
-				.string()
-				.optional()
-				.describe('The Team identifier to perform the request on behalf of'),
-			slug: z
-				.string()
-				.optional()
-				.describe('The Team slug to perform the request on behalf of'),
-		},
-		async ({ id, url, teamId, slug }) => {
-			const baseUrl = new URL(`${BASE_URL}/v13/deployments/${id}`);
-			if (url) baseUrl.searchParams.append('url', url);
-			if (teamId) baseUrl.searchParams.append('teamId', teamId);
-			if (slug) baseUrl.searchParams.append('slug', slug);
+	// // Delete deployment
+	// server.tool(
+	// 	'delete_deployment',
+	// 	'Delete a deployment by ID or URL',
+	// 	{
+	// 		id: z.string().describe('The unique identifier of the deployment'),
+	// 		url: z
+	// 			.string()
+	// 			.optional()
+	// 			.describe('A Deployment or Alias URL (overrides ID if provided)'),
+	// 		teamId: z
+	// 			.string()
+	// 			.optional()
+	// 			.describe('The Team identifier to perform the request on behalf of'),
+	// 		slug: z
+	// 			.string()
+	// 			.optional()
+	// 			.describe('The Team slug to perform the request on behalf of'),
+	// 	},
+	// 	async ({ id, url, teamId, slug }) => {
+	// 		const baseUrl = new URL(`${BASE_URL}/v13/deployments/${id}`);
+	// 		if (url) baseUrl.searchParams.append('url', url);
+	// 		if (teamId) baseUrl.searchParams.append('teamId', teamId);
+	// 		if (slug) baseUrl.searchParams.append('slug', slug);
 
-			const response = await fetch(baseUrl.toString(), {
-				method: 'DELETE',
-				headers: {
-					Authorization: `Bearer ${accessToken}`,
-				},
-			});
+	// 		const response = await fetch(baseUrl.toString(), {
+	// 			method: 'DELETE',
+	// 			headers: {
+	// 				Authorization: `Bearer ${accessToken}`,
+	// 			},
+	// 		});
 
-			const data = await handleResponse(response);
-			return {
-				content: [
-					{
-						type: 'text',
-						text: `Deployment deleted:\n${JSON.stringify(data, null, 2)}`,
-					},
-				],
-			};
-		},
-	);
+	// 		const data = await handleResponse(response);
+	// 		return {
+	// 			content: [
+	// 				{
+	// 					type: 'text',
+	// 					text: `Deployment deleted:\n${JSON.stringify(data, null, 2)}`,
+	// 				},
+	// 			],
+	// 		};
+	// 	},
+	// );
 
 	// Get deployment events
 	server.tool(
@@ -386,91 +386,91 @@ export function registerDeploymentTools(
 		},
 	);
 
-	// Update deployment integration action
-	server.tool(
-		'update_deployment_integration',
-		'Update deployment integration action status',
-		{
-			deploymentId: z.string().describe('The deployment ID'),
-			integrationConfigurationId: z
-				.string()
-				.describe('The integration configuration ID'),
-			resourceId: z.string().describe('The resource ID'),
-			action: z.string().describe('The action to update'),
-			status: z
-				.enum(['running', 'succeeded', 'failed'])
-				.describe('The status of the action'),
-			statusText: z.string().optional().describe('Additional status text'),
-			outcomes: z
-				.array(
-					z.object({
-						kind: z.string(),
-						secrets: z
-							.array(
-								z.object({
-									name: z.string(),
-									value: z.string(),
-								}),
-							)
-							.optional(),
-					}),
-				)
-				.optional()
-				.describe('Action outcomes'),
-			teamId: z
-				.string()
-				.optional()
-				.describe('The Team identifier to perform the request on behalf of'),
-			slug: z
-				.string()
-				.optional()
-				.describe('The Team slug to perform the request on behalf of'),
-		},
-		async ({
-			deploymentId,
-			integrationConfigurationId,
-			resourceId,
-			action,
-			status,
-			statusText,
-			outcomes,
-			teamId,
-			slug,
-		}) => {
-			const url = new URL(
-				`${BASE_URL}/v1/deployments/${deploymentId}/integrations/${integrationConfigurationId}/resources/${resourceId}/actions/${action}`,
-			);
-			if (teamId) url.searchParams.append('teamId', teamId);
-			if (slug) url.searchParams.append('slug', slug);
+	// // Update deployment integration action
+	// server.tool(
+	// 	'update_deployment_integration',
+	// 	'Update deployment integration action status',
+	// 	{
+	// 		deploymentId: z.string().describe('The deployment ID'),
+	// 		integrationConfigurationId: z
+	// 			.string()
+	// 			.describe('The integration configuration ID'),
+	// 		resourceId: z.string().describe('The resource ID'),
+	// 		action: z.string().describe('The action to update'),
+	// 		status: z
+	// 			.enum(['running', 'succeeded', 'failed'])
+	// 			.describe('The status of the action'),
+	// 		statusText: z.string().optional().describe('Additional status text'),
+	// 		outcomes: z
+	// 			.array(
+	// 				z.object({
+	// 					kind: z.string(),
+	// 					secrets: z
+	// 						.array(
+	// 							z.object({
+	// 								name: z.string(),
+	// 								value: z.string(),
+	// 							}),
+	// 						)
+	// 						.optional(),
+	// 				}),
+	// 			)
+	// 			.optional()
+	// 			.describe('Action outcomes'),
+	// 		teamId: z
+	// 			.string()
+	// 			.optional()
+	// 			.describe('The Team identifier to perform the request on behalf of'),
+	// 		slug: z
+	// 			.string()
+	// 			.optional()
+	// 			.describe('The Team slug to perform the request on behalf of'),
+	// 	},
+	// 	async ({
+	// 		deploymentId,
+	// 		integrationConfigurationId,
+	// 		resourceId,
+	// 		action,
+	// 		status,
+	// 		statusText,
+	// 		outcomes,
+	// 		teamId,
+	// 		slug,
+	// 	}) => {
+	// 		const url = new URL(
+	// 			`${BASE_URL}/v1/deployments/${deploymentId}/integrations/${integrationConfigurationId}/resources/${resourceId}/actions/${action}`,
+	// 		);
+	// 		if (teamId) url.searchParams.append('teamId', teamId);
+	// 		if (slug) url.searchParams.append('slug', slug);
 
-			const response = await fetch(url.toString(), {
-				method: 'PATCH',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${accessToken}`,
-				},
-				body: JSON.stringify({
-					status,
-					statusText,
-					outcomes,
-				}),
-			});
+	// 		const response = await fetch(url.toString(), {
+	// 			method: 'PATCH',
+	// 			headers: {
+	// 				'Content-Type': 'application/json',
+	// 				Authorization: `Bearer ${accessToken}`,
+	// 			},
+	// 			body: JSON.stringify({
+	// 				status,
+	// 				statusText,
+	// 				outcomes,
+	// 			}),
+	// 		});
 
-			const data = await handleResponse(response);
-			return {
-				content: [
-					{
-						type: 'text',
-						text: `Integration action updated:\n${JSON.stringify(
-							data,
-							null,
-							2,
-						)}`,
-					},
-				],
-			};
-		},
-	);
+	// 		const data = await handleResponse(response);
+	// 		return {
+	// 			content: [
+	// 				{
+	// 					type: 'text',
+	// 					text: `Integration action updated:\n${JSON.stringify(
+	// 						data,
+	// 						null,
+	// 						2,
+	// 					)}`,
+	// 				},
+	// 			],
+	// 		};
+	// 	},
+	// );
 
 	// List deployment files
 	server.tool(
@@ -510,49 +510,49 @@ export function registerDeploymentTools(
 		},
 	);
 
-	// Upload deployment files
-	server.tool(
-		'upload_deployment_files',
-		'Upload files required for deployment',
-		{
-			content: z.string().describe('The file content to upload'),
-			size: z.number().describe('The file size in bytes'),
-			digest: z.string().max(40).describe('The file SHA1 for integrity check'),
-			teamId: z
-				.string()
-				.optional()
-				.describe('The Team identifier to perform the request on behalf of'),
-			slug: z
-				.string()
-				.optional()
-				.describe('The Team slug to perform the request on behalf of'),
-		},
-		async ({ content, size, digest, teamId, slug }) => {
-			const url = new URL(`${BASE_URL}/v2/files`);
-			if (teamId) url.searchParams.append('teamId', teamId);
-			if (slug) url.searchParams.append('slug', slug);
+	// // Upload deployment files
+	// server.tool(
+	// 	'upload_deployment_files',
+	// 	'Upload files required for deployment',
+	// 	{
+	// 		content: z.string().describe('The file content to upload'),
+	// 		size: z.number().describe('The file size in bytes'),
+	// 		digest: z.string().max(40).describe('The file SHA1 for integrity check'),
+	// 		teamId: z
+	// 			.string()
+	// 			.optional()
+	// 			.describe('The Team identifier to perform the request on behalf of'),
+	// 		slug: z
+	// 			.string()
+	// 			.optional()
+	// 			.describe('The Team slug to perform the request on behalf of'),
+	// 	},
+	// 	async ({ content, size, digest, teamId, slug }) => {
+	// 		const url = new URL(`${BASE_URL}/v2/files`);
+	// 		if (teamId) url.searchParams.append('teamId', teamId);
+	// 		if (slug) url.searchParams.append('slug', slug);
 
-			const response = await fetch(url.toString(), {
-				method: 'POST',
-				headers: {
-					'Content-Length': size.toString(),
-					'x-vercel-digest': digest,
-					Authorization: `Bearer ${accessToken}`,
-				},
-				body: content,
-			});
+	// 		const response = await fetch(url.toString(), {
+	// 			method: 'POST',
+	// 			headers: {
+	// 				'Content-Length': size.toString(),
+	// 				'x-vercel-digest': digest,
+	// 				Authorization: `Bearer ${accessToken}`,
+	// 			},
+	// 			body: content,
+	// 		});
 
-			const data = await handleResponse(response);
-			return {
-				content: [
-					{
-						type: 'text',
-						text: `File upload result:\n${JSON.stringify(data, null, 2)}`,
-					},
-				],
-			};
-		},
-	);
+	// 		const data = await handleResponse(response);
+	// 		return {
+	// 			content: [
+	// 				{
+	// 					type: 'text',
+	// 					text: `File upload result:\n${JSON.stringify(data, null, 2)}`,
+	// 				},
+	// 			],
+	// 		};
+	// 	},
+	// );
 
 	// Get deployment file contents
 	server.tool(

@@ -19,33 +19,32 @@ export function registerSpeedInsightsTools(
 	accessToken: string,
 ) {
 	// Send Web Vitals
-	server.tool(
-		'send_web_vitals_data',
-		'Send web vitals data to Speed Insights API (Deprecated: Use @vercel/speed-insights package instead)',
-		{
-			vitals: VitalsSchema.describe('Web vitals data'),
-		},
-		async ({ vitals }) => {
-			const response = await fetch(`${BASE_URL}/v1/vitals`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${accessToken}`,
-				},
-				body: JSON.stringify(vitals),
-			});
-
-			await handleResponse(response);
-			return {
-				content: [
-					{ type: 'text', text: 'Web vitals data sent successfully' },
-					{
-						type: 'text',
-						text: '⚠️ Warning: This API is deprecated. Please use @vercel/speed-insights package instead.',
-					},
-				],
-			};
-		},
-	);
+	// server.tool(
+	// 	'send_web_vitals_data',
+	// 	'Send web vitals data to Speed Insights API (Deprecated: Use @vercel/speed-insights package instead)',
+	// 	{
+	// 		vitals: VitalsSchema.describe('Web vitals data'),
+	// 	},
+	// 	async ({ vitals }) => {
+	// 		const response = await fetch(`${BASE_URL}/v1/vitals`, {
+	// 			method: 'POST',
+	// 			headers: {
+	// 				'Content-Type': 'application/json',
+	// 				Authorization: `Bearer ${accessToken}`,
+	// 			},
+	// 			body: JSON.stringify(vitals),
+	// 		});
+	// 		await handleResponse(response);
+	// 		return {
+	// 			content: [
+	// 				{ type: 'text', text: 'Web vitals data sent successfully' },
+	// 				{
+	// 					type: 'text',
+	// 					text: '⚠️ Warning: This API is deprecated. Please use @vercel/speed-insights package instead.',
+	// 				},
+	// 			],
+	// 		};
+	// 	},
+	// );
 }
 

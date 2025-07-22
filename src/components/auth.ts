@@ -46,66 +46,66 @@ export function registerAuthTools(server: McpServer, accessToken: string) {
 		},
 	);
 
-	// Delete Auth Token
-	server.tool(
-		'delete_auth_token',
-		'Invalidate an authentication token',
-		{
-			tokenId: z
-				.string()
-				.describe(
-					"The identifier of the token to invalidate. Use 'current' for the current token",
-				),
-		},
-		async ({ tokenId }) => {
-			const response = await fetch(`${BASE_URL}/v3/user/tokens/${tokenId}`, {
-				method: 'DELETE',
-				headers: {
-					Authorization: `Bearer ${accessToken}`,
-				},
-			});
+	// // Delete Auth Token
+	// server.tool(
+	// 	'delete_auth_token',
+	// 	'Invalidate an authentication token',
+	// 	{
+	// 		tokenId: z
+	// 			.string()
+	// 			.describe(
+	// 				"The identifier of the token to invalidate. Use 'current' for the current token",
+	// 			),
+	// 	},
+	// 	async ({ tokenId }) => {
+	// 		const response = await fetch(`${BASE_URL}/v3/user/tokens/${tokenId}`, {
+	// 			method: 'DELETE',
+	// 			headers: {
+	// 				Authorization: `Bearer ${accessToken}`,
+	// 			},
+	// 		});
 
-			const data = await handleResponse(response);
-			return {
-				content: [
-					{
-						type: 'text',
-						text: `Auth token deleted:\n${JSON.stringify(data, null, 2)}`,
-					},
-				],
-			};
-		},
-	);
+	// 		const data = await handleResponse(response);
+	// 		return {
+	// 			content: [
+	// 				{
+	// 					type: 'text',
+	// 					text: `Auth token deleted:\n${JSON.stringify(data, null, 2)}`,
+	// 				},
+	// 			],
+	// 		};
+	// 	},
+	// );
 
-	// Get Auth Token Metadata
-	server.tool(
-		'get_auth_token',
-		'Retrieve metadata about an authentication token',
-		{
-			tokenId: z
-				.string()
-				.describe(
-					"The identifier of the token to retrieve. Use 'current' for the current token",
-				),
-		},
-		async ({ tokenId }) => {
-			const response = await fetch(`${BASE_URL}/v5/user/tokens/${tokenId}`, {
-				headers: {
-					Authorization: `Bearer ${accessToken}`,
-				},
-			});
+	// // Get Auth Token Metadata
+	// server.tool(
+	// 	'get_auth_token',
+	// 	'Retrieve metadata about an authentication token',
+	// 	{
+	// 		tokenId: z
+	// 			.string()
+	// 			.describe(
+	// 				"The identifier of the token to retrieve. Use 'current' for the current token",
+	// 			),
+	// 	},
+	// 	async ({ tokenId }) => {
+	// 		const response = await fetch(`${BASE_URL}/v5/user/tokens/${tokenId}`, {
+	// 			headers: {
+	// 				Authorization: `Bearer ${accessToken}`,
+	// 			},
+	// 		});
 
-			const data = await handleResponse(response);
-			return {
-				content: [
-					{
-						type: 'text',
-						text: `Auth token metadata:\n${JSON.stringify(data, null, 2)}`,
-					},
-				],
-			};
-		},
-	);
+	// 		const data = await handleResponse(response);
+	// 		return {
+	// 			content: [
+	// 				{
+	// 					type: 'text',
+	// 					text: `Auth token metadata:\n${JSON.stringify(data, null, 2)}`,
+	// 				},
+	// 			],
+	// 		};
+	// 	},
+	// );
 
 	// List Auth Tokens
 	server.tool(
@@ -131,53 +131,53 @@ export function registerAuthTools(server: McpServer, accessToken: string) {
 		},
 	);
 
-	// SSO Token Exchange
-	server.tool(
-		'sso_token_exchange',
-		'Exchange OAuth code for OIDC token during SSO authorization',
-		{
-			code: z.string().describe('The sensitive code received from Vercel'),
-			state: z
-				.string()
-				.optional()
-				.describe('The state received from the initialization request'),
-			clientId: z.string().describe('The integration client id'),
-			clientSecret: z.string().describe('The integration client secret'),
-			redirectUri: z
-				.string()
-				.optional()
-				.describe('The integration redirect URI'),
-		},
-		async ({ code, state, clientId, clientSecret, redirectUri }) => {
-			const response = await fetch(`${BASE_URL}/v1/integrations/sso/token`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${accessToken}`,
-				},
-				body: JSON.stringify({
-					code,
-					state,
-					client_id: clientId,
-					client_secret: clientSecret,
-					redirect_uri: redirectUri,
-				}),
-			});
+	// // SSO Token Exchange
+	// server.tool(
+	// 	'sso_token_exchange',
+	// 	'Exchange OAuth code for OIDC token during SSO authorization',
+	// 	{
+	// 		code: z.string().describe('The sensitive code received from Vercel'),
+	// 		state: z
+	// 			.string()
+	// 			.optional()
+	// 			.describe('The state received from the initialization request'),
+	// 		clientId: z.string().describe('The integration client id'),
+	// 		clientSecret: z.string().describe('The integration client secret'),
+	// 		redirectUri: z
+	// 			.string()
+	// 			.optional()
+	// 			.describe('The integration redirect URI'),
+	// 	},
+	// 	async ({ code, state, clientId, clientSecret, redirectUri }) => {
+	// 		const response = await fetch(`${BASE_URL}/v1/integrations/sso/token`, {
+	// 			method: 'POST',
+	// 			headers: {
+	// 				'Content-Type': 'application/json',
+	// 				Authorization: `Bearer ${accessToken}`,
+	// 			},
+	// 			body: JSON.stringify({
+	// 				code,
+	// 				state,
+	// 				client_id: clientId,
+	// 				client_secret: clientSecret,
+	// 				redirect_uri: redirectUri,
+	// 			}),
+	// 		});
 
-			const data = await handleResponse(response);
-			return {
-				content: [
-					{
-						type: 'text',
-						text: `SSO token exchange completed:\n${JSON.stringify(
-							data,
-							null,
-							2,
-						)}`,
-					},
-				],
-			};
-		},
-	);
+	// 		const data = await handleResponse(response);
+	// 		return {
+	// 			content: [
+	// 				{
+	// 					type: 'text',
+	// 					text: `SSO token exchange completed:\n${JSON.stringify(
+	// 						data,
+	// 						null,
+	// 						2,
+	// 					)}`,
+	// 				},
+	// 			],
+	// 		};
+	// 	},
+	// );
 }
 

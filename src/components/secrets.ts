@@ -62,112 +62,112 @@ export function registerSecretTools(server: McpServer, accessToken: string) {
 		},
 	);
 
-	// Change secret name
-	server.tool(
-		'update_secret_name',
-		'Change the name of a secret',
-		{
-			currentName: z.string().describe('The current name of the secret'),
-			newName: z.string().max(100).describe('The new name for the secret'),
-			...teamParams,
-		},
-		async ({ currentName, newName, teamId, slug }) => {
-			const url = new URL(`${BASE_URL}/v2/secrets/${currentName}`);
-			if (teamId) url.searchParams.append('teamId', teamId);
-			if (slug) url.searchParams.append('slug', slug);
+	// // Change secret name
+	// server.tool(
+	// 	'update_secret_name',
+	// 	'Change the name of a secret',
+	// 	{
+	// 		currentName: z.string().describe('The current name of the secret'),
+	// 		newName: z.string().max(100).describe('The new name for the secret'),
+	// 		...teamParams,
+	// 	},
+	// 	async ({ currentName, newName, teamId, slug }) => {
+	// 		const url = new URL(`${BASE_URL}/v2/secrets/${currentName}`);
+	// 		if (teamId) url.searchParams.append('teamId', teamId);
+	// 		if (slug) url.searchParams.append('slug', slug);
 
-			const response = await fetch(url.toString(), {
-				method: 'PATCH',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${accessToken}`,
-				},
-				body: JSON.stringify({ name: newName }),
-			});
+	// 		const response = await fetch(url.toString(), {
+	// 			method: 'PATCH',
+	// 			headers: {
+	// 				'Content-Type': 'application/json',
+	// 				Authorization: `Bearer ${accessToken}`,
+	// 			},
+	// 			body: JSON.stringify({ name: newName }),
+	// 		});
 
-			const data = await handleResponse(response);
-			return {
-				content: [
-					{
-						type: 'text',
-						text: `Secret name updated:\n${JSON.stringify(data, null, 2)}`,
-					},
-				],
-			};
-		},
-	);
+	// 		const data = await handleResponse(response);
+	// 		return {
+	// 			content: [
+	// 				{
+	// 					type: 'text',
+	// 					text: `Secret name updated:\n${JSON.stringify(data, null, 2)}`,
+	// 				},
+	// 			],
+	// 		};
+	// 	},
+	// );
 
-	// Delete a secret
-	server.tool(
-		'delete_secret',
-		'Delete a secret',
-		{
-			idOrName: z
-				.string()
-				.describe('The name or unique identifier of the secret'),
-			...teamParams,
-		},
-		async ({ idOrName, teamId, slug }) => {
-			const url = new URL(`${BASE_URL}/v2/secrets/${idOrName}`);
-			if (teamId) url.searchParams.append('teamId', teamId);
-			if (slug) url.searchParams.append('slug', slug);
+	// // Delete a secret
+	// server.tool(
+	// 	'delete_secret',
+	// 	'Delete a secret',
+	// 	{
+	// 		idOrName: z
+	// 			.string()
+	// 			.describe('The name or unique identifier of the secret'),
+	// 		...teamParams,
+	// 	},
+	// 	async ({ idOrName, teamId, slug }) => {
+	// 		const url = new URL(`${BASE_URL}/v2/secrets/${idOrName}`);
+	// 		if (teamId) url.searchParams.append('teamId', teamId);
+	// 		if (slug) url.searchParams.append('slug', slug);
 
-			const response = await fetch(url.toString(), {
-				method: 'DELETE',
-				headers: {
-					Authorization: `Bearer ${accessToken}`,
-				},
-			});
+	// 		const response = await fetch(url.toString(), {
+	// 			method: 'DELETE',
+	// 			headers: {
+	// 				Authorization: `Bearer ${accessToken}`,
+	// 			},
+	// 		});
 
-			const data = await handleResponse(response);
-			return {
-				content: [
-					{
-						type: 'text',
-						text: `Secret deleted:\n${JSON.stringify(data, null, 2)}`,
-					},
-				],
-			};
-		},
-	);
+	// 		const data = await handleResponse(response);
+	// 		return {
+	// 			content: [
+	// 				{
+	// 					type: 'text',
+	// 					text: `Secret deleted:\n${JSON.stringify(data, null, 2)}`,
+	// 				},
+	// 			],
+	// 		};
+	// 	},
+	// );
 
-	// Get a single secret
-	server.tool(
-		'get_secret',
-		'Get information for a specific secret',
-		{
-			idOrName: z
-				.string()
-				.describe('The name or unique identifier of the secret'),
-			decrypt: z
-				.enum(['true', 'false'])
-				.optional()
-				.describe('Whether to try to decrypt the value of the secret'),
-			...teamParams,
-		},
-		async ({ idOrName, decrypt, teamId, slug }) => {
-			const url = new URL(`${BASE_URL}/v3/secrets/${idOrName}`);
-			if (decrypt) url.searchParams.append('decrypt', decrypt);
-			if (teamId) url.searchParams.append('teamId', teamId);
-			if (slug) url.searchParams.append('slug', slug);
+	// // Get a single secret
+	// server.tool(
+	// 	'get_secret',
+	// 	'Get information for a specific secret',
+	// 	{
+	// 		idOrName: z
+	// 			.string()
+	// 			.describe('The name or unique identifier of the secret'),
+	// 		decrypt: z
+	// 			.enum(['true', 'false'])
+	// 			.optional()
+	// 			.describe('Whether to try to decrypt the value of the secret'),
+	// 		...teamParams,
+	// 	},
+	// 	async ({ idOrName, decrypt, teamId, slug }) => {
+	// 		const url = new URL(`${BASE_URL}/v3/secrets/${idOrName}`);
+	// 		if (decrypt) url.searchParams.append('decrypt', decrypt);
+	// 		if (teamId) url.searchParams.append('teamId', teamId);
+	// 		if (slug) url.searchParams.append('slug', slug);
 
-			const response = await fetch(url.toString(), {
-				headers: {
-					Authorization: `Bearer ${accessToken}`,
-				},
-			});
+	// 		const response = await fetch(url.toString(), {
+	// 			headers: {
+	// 				Authorization: `Bearer ${accessToken}`,
+	// 			},
+	// 		});
 
-			const data = await handleResponse(response);
-			return {
-				content: [
-					{
-						type: 'text',
-						text: `Secret information:\n${JSON.stringify(data, null, 2)}`,
-					},
-				],
-			};
-		},
-	);
+	// 		const data = await handleResponse(response);
+	// 		return {
+	// 			content: [
+	// 				{
+	// 					type: 'text',
+	// 					text: `Secret information:\n${JSON.stringify(data, null, 2)}`,
+	// 				},
+	// 			],
+	// 		};
+	// 	},
+	// );
 
 	// List secrets
 	server.tool(
