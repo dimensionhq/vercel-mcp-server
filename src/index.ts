@@ -1,60 +1,121 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { ToolManager } from "./tool-manager.js";
-import { registerResources } from "./resources.js";
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import { registerResources } from './resources.js';
+import express, { Request, Response } from 'express';
+import 'dotenv/config';
 
-export const BASE_URL = "https://api.vercel.com";
-export const DEFAULT_ACCESS_TOKEN = "Your_Access_Token"; // Replace with your actual token
+// Import all tool registration functions directly
+import { register as registerAccessTools } from './tool-groups/access/index.js';
+import { register as registerDomainsTools } from './tool-groups/domains/index.js';
+import { register as registerInfrastructureTools } from './tool-groups/infrastructure/index.js';
+import { register as registerIntegrationsTools } from './tool-groups/integrations/index.js';
+import { register as registerProjectsTools } from './tool-groups/projects/index.js';
 
-// Utility function to handle responses
-export async function handleResponse(response: Response): Promise<any> {
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
-  }
-  return response.json();
-}
+const app = express();
+app.use(express.json());
 
-async function main() {
-  try {
-    // Create an MCP server instance for Vercel tools
-    const server = new McpServer({
-      name: "vercel-tools",
-      version: "1.0.0"
-    });
+app.post('/mcp', async (req: Request, res: Response) => {
+	// In stateless mode, create a new instance of transport and server for each request
+	// to ensure complete isolation. A single instance would cause request ID collisions
+	// when multiple clients connect concurrently.
 
-    // Register resources (these are always available)
-    registerResources(server);
+	try {
+		// Extract access token from headers
+		const accessToken =
+			req.headers.authorization?.replace('Bearer ', '') ||
+			(req.headers['x-vercel-token'] as string) ||
+			(req.headers['vercel-token'] as string);
+		if (!accessToken) {
+			return res.status(401).json({
+				jsonrpc: '2.0',
+				error: {
+					code: -32001,
+					message:
+						'Access token required. Provide via Authorization header, x-vercel-token header, or DEFAULT_ACCESS_TOKEN env var.',
+				},
+				id: null,
+			});
+		}
 
-    // Create tool manager
-    const toolManager = new ToolManager(server);
+		const server = new McpServer({
+			name: 'vercel-tools',
+			version: '1.0.0',
+		});
 
-    // Load only essential groups initially
-    await toolManager.loadGroup('projects'); // Most commonly used
-    await toolManager.loadGroup('infrastructure'); // Contains core functionality
+		// Register resources (these are always available)
+		registerResources(server, accessToken);
 
-    // Create transport
-    const transport = new StdioServerTransport();
+		// Register all tool groups upfront so they appear in MCP inspector
+		await registerAccessTools(server, accessToken);
+		await registerDomainsTools(server, accessToken);
+		await registerInfrastructureTools(server, accessToken);
+		await registerIntegrationsTools(server, accessToken);
+		await registerProjectsTools(server, accessToken);
 
-    // Connect transport to server
-    await server.connect(transport);
+		const transport: StreamableHTTPServerTransport =
+			new StreamableHTTPServerTransport({
+				sessionIdGenerator: undefined,
+			});
+		res.on('close', () => {
+			console.log('Request closed');
+			transport.close();
+			server.close();
+		});
+		await server.connect(transport);
+		await transport.handleRequest(req, res, req.body);
+	} catch (error) {
+		console.error('Error handling MCP request:', error);
+		if (!res.headersSent) {
+			res.status(500).json({
+				jsonrpc: '2.0',
+				error: {
+					code: -32603,
+					message: 'Internal server error',
+				},
+				id: null,
+			});
+		}
+	}
+});
 
-    // Log startup
-    console.error("Vercel MCP Server running on stdio");
+// SSE notifications not supported in stateless mode
+app.get('/mcp', async (req: Request, res: Response) => {
+	console.log('Received GET MCP request');
+	res.writeHead(405).end(
+		JSON.stringify({
+			jsonrpc: '2.0',
+			error: {
+				code: -32000,
+				message: 'Method not allowed.',
+			},
+			id: null,
+		}),
+	);
+});
 
-    // Keep the process running
-    process.stdin.resume();
+// Session termination not needed in stateless mode
+app.delete('/mcp', async (req: Request, res: Response) => {
+	console.log('Received DELETE MCP request');
+	res.writeHead(405).end(
+		JSON.stringify({
+			jsonrpc: '2.0',
+			error: {
+				code: -32000,
+				message: 'Method not allowed.',
+			},
+			id: null,
+		}),
+	);
+});
 
-    // Handle process termination
-    process.on('SIGINT', () => {
-      console.error("Shutting down...");
-      process.exit(0);
-    });
+// Start the server
+const PORT = 8080;
 
-  } catch (error) {
-    console.error("Fatal error:", error);
-    process.exit(1);
-  }
-}
+app.listen(PORT, (error) => {
+	if (error) {
+		console.error('Failed to start server:', error);
+		process.exit(1);
+	}
+	console.log(`MCP Stateless Streamable HTTP Server listening on port ${PORT}`);
+});
 
-main();

@@ -15,7 +15,6 @@ build/
 .env
 .env.local
 .env.*.local
-src/config/constants.ts
 src/index.ts
 
 # IDE and editor files
