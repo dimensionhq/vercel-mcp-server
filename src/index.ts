@@ -113,7 +113,7 @@ app.delete('/mcp', async (req: Request, res: Response) => {
 });
 
 // Start the server
-const PORT = 8080;
+const PORT = 8081;
 
 app.listen(PORT, (error) => {
 	if (error) {
