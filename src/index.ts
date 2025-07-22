@@ -14,6 +14,10 @@ import { register as registerProjectsTools } from './tool-groups/projects/index.
 const app = express();
 app.use(express.json());
 
+app.get('/health', (_req: Request, res: Response) => {
+	res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 app.post('/mcp', async (req: Request, res: Response) => {
 	// In stateless mode, create a new instance of transport and server for each request
 	// to ensure complete isolation. A single instance would cause request ID collisions
